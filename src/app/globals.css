@@ -1,26 +1,44 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: "YekanBakh-Regular";
+  src: url("https://db.onlinewebfonts.com/t/7296ae79f6faca68798b00fbbbee4c22.eot");
+  src: url("https://db.onlinewebfonts.com/t/7296ae79f6faca68798b00fbbbee4c22.eot?#iefix")
+      format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/7296ae79f6faca68798b00fbbbee4c22.woff2")
+      format("woff2"),
+    url("https://db.onlinewebfonts.com/t/7296ae79f6faca68798b00fbbbee4c22.woff")
+      format("woff"),
+    url("https://db.onlinewebfonts.com/t/7296ae79f6faca68798b00fbbbee4c22.ttf")
+      format("truetype"),
+    url("https://db.onlinewebfonts.com/t/7296ae79f6faca68798b00fbbbee4c22.svg#YekanBakh-Regular")
+      format("svg");
 }
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --background: #fff;
+  --foreground: #0a0a0a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fff;
+    --foreground: #0a0a0a;
   }
 }
 
+html,
 body {
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1200px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  box-sizing: border-box;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: YekanBakh-Regular, Arial, Helvetica, sans-serif;
 }

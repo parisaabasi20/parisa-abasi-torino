@@ -1,0 +1,120 @@
+/* components/modules/LoginModal.module.css */
+
+.btnLogin {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  width: 358px;
+  height: 362px;
+  box-shadow: 5px 10px 18px #888888;
+  direction: rtl;
+  text-align: center;
+  margin: 10px;
+  position: relative;
+}
+
+.modalContent h2 {
+  font-size: 22px;
+  margin-bottom: 40px;
+  font-weight: 600;
+}
+
+.modalContent p {
+  font-size: 16px;
+  color: #888888;
+  text-align: right;
+}
+
+.modalContent input {
+  width: 278px;
+  height: 57px;
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.modalContent .otpInput {
+  width: 40px;
+  height: 40px;
+  margin: 5px 3px;
+  font-size: 24px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.title {
+  font-size: 28px;
+}
+
+.textOne {
+  margin-right: 40px;
+}
+
+.form input {
+  height: 54px;
+  font-size: 15px;
+}
+.otp {
+  text-align: center;
+}
+
+.inputError {
+  border-color: red;
+}
+
+.errorText {
+  color: red;
+  font-size: 14px;
+  margin: 0 0 10px 0;
+}
+
+.btnSubmit {
+  width: 278px;
+  height: 57px;
+  font-size: 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 6px;
+  transition: all 0.5s ease-in;
+}
+
+.btnSubmit:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.modalHeaderIcon {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}

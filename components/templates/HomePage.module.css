@@ -1,0 +1,15 @@
+.bannerWrapper {
+  width: 100%;
+  /* max-width: 600px; */
+  /* margin: 0 auto 24px auto; */
+  aspect-ratio: 3.5/1;
+  position: relative;
+  overflow: hidden;
+
+}
+
+.title{
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+}

@@ -1,0 +1,27 @@
+.container{
+    border-top: dashed 3px #c7c7c7;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.subContainer{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.subContainerEnd{
+    display: flex;
+    justify-content: space-around;
+    border-bottom: solid 3px #c7c7c7;
+}
+
+.icons{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.text{
+    text-align: center;
+}

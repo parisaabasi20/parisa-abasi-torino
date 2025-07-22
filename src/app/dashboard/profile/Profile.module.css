@@ -1,0 +1,43 @@
+.accountInfo,.personalInfo,.bankInfo{
+    border: 1px solid #00000033;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.header{
+    font-size: 16px;
+    font-weight: 400;
+    margin: 20px 10px;
+}
+
+.accountInfoRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.personalInfoHeader,.personalInfoRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bankInfoHeader,.bankInfoRow{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bankInfoRow,.personalInfoRow,.accountInfoRow{
+    margin: 20px 10px;
+    font-size: 14px;
+    font-weight: 300;
+    color: #363535;
+}
+
+.bankInfoEditBtn,.personalInfoEditBtn,.accountInfoBtn{
+    border: none;
+    background-color: #fff;
+    color:#009ECA;
+    cursor: pointer;
+}

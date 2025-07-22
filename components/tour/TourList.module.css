@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.header {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.btnMore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.btn {
+  width: 117px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #888;
+}
+.tourCard {
+  flex: 1 1 30%;
+  margin: 10px;
+}
+
+@media (min-width: 767px) {
+  .container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
