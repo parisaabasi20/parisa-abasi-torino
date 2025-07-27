@@ -3,18 +3,30 @@ import Image from 'next/image'
 import styles from "./HomePage.module.css";
 import SearchForm from 'components/search/SearchForm';
 import api from "../../core/config/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TourList from 'components/tour/TourList';
 import LoginModal from 'components/modules/LoginModal';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function HomePage({ initialTours = [] }) {
+function HomePage({ initialTours = [], redirectPath, showExpiredMessage }) {
   const [tours, setTours] = useState(initialTours);
   const [searched, setSearched] = useState(false);
-
-  // مدیریت مدال لاگین
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  
   const openLoginModal = () => setIsLoginOpen(true);
   const closeLoginModal = () => setIsLoginOpen(false);
+
+
+  useEffect(() => {
+    if (showExpiredMessage) {
+      toast.error("جلسه شما منقضی شده است. لطفاً دوباره وارد شوید.");
+    }
+    
+    if (redirectPath) {
+      toast.info("برای دسترسی به این صفحه، لطفاً وارد حساب کاربری خود شوید.");
+    }
+  }, [showExpiredMessage, redirectPath]);
 
   const handleSearch = async (filters) => {
     if (!filters.origin && !filters.destination && !filters.date) {
@@ -52,6 +64,7 @@ function HomePage({ initialTours = [] }) {
       <SearchForm onSearch={handleSearch}/>
       <TourList tours={tours} openLoginModal={openLoginModal} />
       <LoginModal isOpen={isLoginOpen} onClose={closeLoginModal} />
+      <ToastContainer position="top-center" rtl />
     </div>
   )
 }

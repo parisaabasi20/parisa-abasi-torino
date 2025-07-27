@@ -5,21 +5,9 @@ import { usePathname } from "next/navigation";
 import ContactGray from "components/icons/ContactGray";
 import Lamp from "components/icons/Lamp";
 import Trakonesh from "components/icons/Trakonesh";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { getCookie } from "../../../core/utils/cookie";
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = getCookie("accessToken");
-    if (!token) {
-      router.push("/");
-      return;
-    }
-  }, [router]);
 
   return (
     <div>

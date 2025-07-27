@@ -3,13 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Edite from "components/icons/Edite";
 import styles from "./Profile.module.css";
-
-function getCookie(name) {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-}
+import { getCookie } from "../../../../core/utils/cookie";
 
 function Profile() {
   const router = useRouter();
@@ -25,14 +19,8 @@ function Profile() {
 
   useEffect(() => {
     const token = getCookie("accessToken");
-    if (!token) {
-      router.push("/");
-      return;
-    }
-
     const phone = getCookie("userPhone") || "";
     setUserPhone(phone);
-    console.log("userPhone set to:", phone);
 
     if (typeof window !== "undefined") {
       const storedProfile = localStorage.getItem("userProfile");
@@ -40,7 +28,6 @@ function Profile() {
         try {
           const parsedProfile = JSON.parse(storedProfile);
           setProfileData(parsedProfile);
-          console.log("Loaded from localStorage:", parsedProfile); // لاگ برای دیباگ
         } catch (err) {
           console.error("Error parsing localStorage userProfile:", err);
           setError("خطا در بارگذاری اطلاعات ذخیره‌شده!");
@@ -58,7 +45,7 @@ function Profile() {
         if (res.status === 401 || res.status === 403) {
           setError("دسترسی غیرمجاز! لطفاً دوباره وارد شوید.");
           if (typeof window !== "undefined") {
-            localStorage.removeItem("userProfile"); // پاک کردن localStorage
+            localStorage.removeItem("userProfile");
           }
           return null;
         }
@@ -69,14 +56,11 @@ function Profile() {
         return res.json();
       })
       .then((data) => {
-        console.log("API response:", data);
-
         const profile = data?.user || data;
         if (profile && profile.id && profile.mobile) {
           setProfileData(profile);
           if (typeof window !== "undefined") {
             localStorage.setItem("userProfile", JSON.stringify(profile));
-            console.log("Saved to localStorage:", profile);
           }
         } else {
           setError("داده‌های پروفایل از سرور نامعتبر است!");
@@ -93,19 +77,17 @@ function Profile() {
         );
         setIsLoading(false);
       });
-  }, [router]);
+  }, []);
 
   const handleEdit = (section) => {
-    setError("");
-    setSuccess("");
     if (section === "account") {
+      setIsEditingAccount(true);
       setForm({
-        mobile: profileData?.mobile || userPhone || "",
+        mobile: profileData?.mobile || "",
         email: profileData?.email || "",
       });
-      setIsEditingAccount(true);
-    }
-    if (section === "personal") {
+    } else if (section === "personal") {
+      setIsEditingPersonal(true);
       setForm({
         firstName: profileData?.firstName || "",
         lastName: profileData?.lastName || "",
@@ -113,20 +95,25 @@ function Profile() {
         nationalCode: profileData?.nationalCode || "",
         birthDate: profileData?.birthDate || "",
       });
-      setIsEditingPersonal(true);
-    }
-    if (section === "bank") {
+    } else if (section === "bank") {
+      setIsEditingBank(true);
       setForm({
         debitCard_code: profileData?.payment?.debitCard_code || "",
         shaba_code: profileData?.payment?.shaba_code || "",
         accountIdentifier: profileData?.payment?.accountIdentifier || "",
       });
-      setIsEditingBank(true);
     }
   };
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleCancel = (section) => {
+    if (section === "account") {
+      setIsEditingAccount(false);
+    } else if (section === "personal") {
+      setIsEditingPersonal(false);
+    } else if (section === "bank") {
+      setIsEditingBank(false);
+    }
+    setForm({});
   };
 
   const handleSubmit = async (section) => {
@@ -177,301 +164,172 @@ function Profile() {
         return;
       }
       const data = await res.json();
-      console.log("API response after submit:", data);
       const profile = data?.user || data;
-      if (profile && profile.id && profile.mobile) {
+      if (profile) {
         setProfileData(profile);
-        setIsEditingAccount(false);
-        setIsEditingPersonal(false);
-        setIsEditingBank(false);
-        setSuccess("اطلاعات با موفقیت ذخیره شد.");
         if (typeof window !== "undefined") {
           localStorage.setItem("userProfile", JSON.stringify(profile));
-          console.log("Saved to localStorage after submit:", profile);
         }
-      } else {
-        setError("داده‌های پروفایل از سرور نامعتبر است!");
+        setSuccess("اطلاعات با موفقیت ذخیره شد!");
+        handleCancel(section);
       }
-    } catch (err) {
-      console.error("Error saving profile:", err);
-      setError("خطا در ارتباط با سرور!");
+    } catch (error) {
+      setError("خطا در ذخیره اطلاعات!");
     }
   };
 
+  if (isLoading) {
+    return <div>در حال بارگذاری...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
+
   return (
-    <div className={styles.profileWrapper}>
-      {isLoading && <div className={styles.loadingMsg}>در حال بارگذاری...</div>}
-      {error && <div className={styles.errorMsg}>{error}</div>}
-      {success && <div className={styles.successMsg}>{success}</div>}
+    <div className={styles.container}>
+      <h1>پروفایل کاربری</h1>
+      <p>شماره موبایل: {userPhone}</p>
 
-      {!isLoading && (
-        <div className={styles.accountInfo}>
-          <h3 className={styles.header}>اطلاعات حساب کاربری</h3>
-          {isEditingAccount ? (
-            <form
-              className={styles.accountInfoForm}
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit("account");
-              }}
-            >
-              <div className={styles.accountInfoRow}>
-                <input
-                  name="mobile"
-                  value={form.mobile}
-                  onChange={handleChange}
-                  className={styles.accountInfoInput}
-                  placeholder="شماره موبایل"
-                  disabled
-                />
-              </div>
-              <div className={styles.accountInfoRow}>
-                <input
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  className={styles.accountInfoInput}
-                  placeholder="ایمیل"
-                />
-              </div>
-              <button className={styles.accountInfoBtn} type="submit">
-                تایید
-              </button>
-              <button
-                className={styles.accountInfoBtn}
-                type="button"
-                onClick={() => setIsEditingAccount(false)}
-              >
-                انصراف
-              </button>
-            </form>
-          ) : (
-            <>
-              <div className={styles.accountInfoRow}>
-                <p className={styles.accountInfoLabel}>شماره موبایل</p>
-                <p className={styles.accountInfoValue}>
-                  {profileData?.mobile || userPhone || "-"}
-                </p>
-              </div>
-              <div className={styles.accountInfoRow}>
-                <p className={styles.accountInfoLabel}>ایمیل</p>
-                <p className={styles.accountInfoValue}>
-                  {profileData?.email || "-"}
-                </p>
-                <button
-                  className={styles.accountInfoBtn}
-                  onClick={() => handleEdit("account")}
-                >
-                  <Edite />
-                  {profileData?.email ? "ویرایش" : "افزودن"}
-                </button>
-              </div>
-            </>
+      {success && <div className={styles.success}>{success}</div>}
+
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2>اطلاعات حساب کاربری</h2>
+          {!isEditingAccount && (
+            <button onClick={() => handleEdit("account")}>
+              <Edite />
+            </button>
           )}
         </div>
-      )}
-
-      {!isLoading && (
-        <div className={styles.personalInfo}>
-          <div className={styles.personalInfoHeader}>
-            <h3 className={styles.header}>اطلاعات شخصی</h3>
-            {!isEditingPersonal && (
-              <button
-                className={styles.personalInfoEditBtn}
-                onClick={() => handleEdit("personal")}
-              >
-                <Edite />
-                ویرایش اطلاعات
-              </button>
-            )}
+        {isEditingAccount ? (
+          <div className={styles.editForm}>
+            <input
+              type="text"
+              placeholder="شماره موبایل"
+              value={form.mobile || ""}
+              onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+            />
+            <input
+              type="email"
+              placeholder="ایمیل"
+              value={form.email || ""}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+            <div className={styles.buttonGroup}>
+              <button onClick={() => handleSubmit("account")}>ذخیره</button>
+              <button onClick={() => handleCancel("account")}>لغو</button>
+            </div>
           </div>
-          {isEditingPersonal ? (
-            <form
-              className={styles.personalInfoForm}
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit("personal");
-              }}
-            >
-              <div className={styles.personalInfoRow}>
-                <input
-                  name="firstName"
-                  value={form.firstName}
-                  onChange={handleChange}
-                  className={styles.personalInfoInput}
-                  placeholder="نام"
-                />
-              </div>
-              <div className={styles.personalInfoRow}>
-                <input
-                  name="lastName"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  className={styles.personalInfoInput}
-                  placeholder="نام خانوادگی"
-                />
-              </div>
-              <div className={styles.personalInfoRow}>
-                <input
-                  name="nationalCode"
-                  value={form.nationalCode}
-                  onChange={handleChange}
-                  className={styles.personalInfoInput}
-                  placeholder="کد ملی"
-                />
-              </div>
-              <div className={styles.personalInfoRow}>
-                <select
-                  name="gender"
-                  value={form.gender}
-                  onChange={handleChange}
-                  className={styles.personalInfoInput}
-                >
-                  <option value="">جنسیت</option>
-                  <option value="male">مرد</option>
-                  <option value="female">زن</option>
-                </select>
-              </div>
-              <div className={styles.personalInfoRow}>
-                <input
-                  name="birthDate"
-                  value={form.birthDate}
-                  onChange={handleChange}
-                  className={styles.personalInfoInput}
-                  placeholder="تاریخ تولد"
-                  type="date"
-                />
-              </div>
-              <button className={styles.personalInfoEditBtn} type="submit">
-                تایید
-              </button>
-              <button
-                className={styles.personalInfoEditBtn}
-                type="button"
-                onClick={() => setIsEditingPersonal(false)}
-              >
-                انصراف
-              </button>
-            </form>
-          ) : (
-            <>
-              <div className={styles.personalInfoRow}>
-                <p className={styles.personalInfoLabel}>نام و نام خانوادگی</p>
-                <p className={styles.personalInfoValue}>
-                  {profileData?.firstName || "-"} {profileData?.lastName || ""}
-                </p>
-              </div>
-              <div className={styles.personalInfoRow}>
-                <p className={styles.personalInfoLabel}>کد ملی</p>
-                <p className={styles.personalInfoValue}>
-                  {profileData?.nationalCode || "-"}
-                </p>
-              </div>
-              <div className={styles.personalInfoRow}>
-                <p className={styles.personalInfoLabel}>جنسیت</p>
-                <p className={styles.personalInfoValue}>
-                  {profileData?.gender === "male"
-                    ? "مرد"
-                    : profileData?.gender === "female"
-                    ? "زن"
-                    : "-"}
-                </p>
-              </div>
-              <div className={styles.personalInfoRow}>
-                <p className={styles.personalInfoLabel}>تاریخ تولد</p>
-                <p className={styles.personalInfoValue}>
-                  {profileData?.birthDate || "-"}
-                </p>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
-      {!isLoading && (
-        <div className={styles.bankInfo}>
-          <div className={styles.bankInfoHeader}>
-            <h3 className={styles.header}>اطلاعات حساب بانکی</h3>
-            {!isEditingBank && (
-              <button
-                className={styles.bankInfoEditBtn}
-                onClick={() => handleEdit("bank")}
-              >
-                <Edite />
-                ویرایش اطلاعات
-              </button>
-            )}
+        ) : (
+          <div className={styles.info}>
+            <p>شماره موبایل: {profileData?.mobile || "تنظیم نشده"}</p>
+            <p>ایمیل: {profileData?.email || "تنظیم نشده"}</p>
           </div>
-          {isEditingBank ? (
-            <form
-              className={styles.bankInfoForm}
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit("bank");
-              }}
-            >
-              <div className={styles.bankInfoRow}>
-                <input
-                  name="debitCard_code"
-                  value={form.debitCard_code}
-                  onChange={handleChange}
-                  className={styles.bankInfoInput}
-                  placeholder="شماره کارت"
-                />
-              </div>
-              <div className={styles.bankInfoRow}>
-                <input
-                  name="accountIdentifier"
-                  value={form.accountIdentifier}
-                  onChange={handleChange}
-                  className={styles.bankInfoInput}
-                  placeholder="شماره حساب"
-                />
-              </div>
-              <div className={styles.bankInfoRow}>
-                <input
-                  name="shaba_code"
-                  value={form.shaba_code}
-                  onChange={handleChange}
-                  className={styles.bankInfoInput}
-                  placeholder="شماره شبا"
-                />
-              </div>
-              <button className={styles.bankInfoEditBtn} type="submit">
-                تایید
-              </button>
-              <button
-                className={styles.bankInfoEditBtn}
-                type="button"
-                onClick={() => setIsEditingBank(false)}
-              >
-                انصراف
-              </button>
-            </form>
-          ) : (
-            <>
-              <div className={styles.bankInfoRow}>
-                <p className={styles.bankInfoLabel}>شماره کارت</p>
-                <p className={styles.bankInfoValue}>
-                  {profileData?.payment?.debitCard_code || "-"}
-                </p>
-              </div>
-              <div className={styles.bankInfoRow}>
-                <p className={styles.bankInfoLabel}>شماره شبا</p>
-                <p className={styles.bankInfoValue}>
-                  {profileData?.payment?.shaba_code || "-"}
-                </p>
-              </div>
-              <div className={styles.bankInfoRow}>
-                <p className={styles.bankInfoLabel}>شماره حساب</p>
-                <p className={styles.bankInfoValue}>
-                  {profileData?.payment?.accountIdentifier || "-"}
-                </p>
-              </div>
-            </>
+        )}
+      </div>
+
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2>اطلاعات شخصی</h2>
+          {!isEditingPersonal && (
+            <button onClick={() => handleEdit("personal")}>
+              <Edite />
+            </button>
           )}
         </div>
-      )}
+        {isEditingPersonal ? (
+          <div className={styles.editForm}>
+            <input
+              type="text"
+              placeholder="نام"
+              value={form.firstName || ""}
+              onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="نام خانوادگی"
+              value={form.lastName || ""}
+              onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+            />
+            <select
+              value={form.gender || ""}
+              onChange={(e) => setForm({ ...form, gender: e.target.value })}
+            >
+              <option value="">انتخاب جنسیت</option>
+              <option value="male">مرد</option>
+              <option value="female">زن</option>
+            </select>
+            <input
+              type="text"
+              placeholder="کد ملی"
+              value={form.nationalCode || ""}
+              onChange={(e) => setForm({ ...form, nationalCode: e.target.value })}
+            />
+            <input
+              type="date"
+              placeholder="تاریخ تولد"
+              value={form.birthDate || ""}
+              onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
+            />
+            <div className={styles.buttonGroup}>
+              <button onClick={() => handleSubmit("personal")}>ذخیره</button>
+              <button onClick={() => handleCancel("personal")}>لغو</button>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.info}>
+            <p>نام: {profileData?.firstName || "تنظیم نشده"}</p>
+            <p>نام خانوادگی: {profileData?.lastName || "تنظیم نشده"}</p>
+            <p>جنسیت: {profileData?.gender || "تنظیم نشده"}</p>
+            <p>کد ملی: {profileData?.nationalCode || "تنظیم نشده"}</p>
+            <p>تاریخ تولد: {profileData?.birthDate || "تنظیم نشده"}</p>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2>اطلاعات بانکی</h2>
+          {!isEditingBank && (
+            <button onClick={() => handleEdit("bank")}>
+              <Edite />
+            </button>
+          )}
+        </div>
+        {isEditingBank ? (
+          <div className={styles.editForm}>
+            <input
+              type="text"
+              placeholder="شماره کارت"
+              value={form.debitCard_code || ""}
+              onChange={(e) => setForm({ ...form, debitCard_code: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="شماره شبا"
+              value={form.shaba_code || ""}
+              onChange={(e) => setForm({ ...form, shaba_code: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="شناسه حساب"
+              value={form.accountIdentifier || ""}
+              onChange={(e) => setForm({ ...form, accountIdentifier: e.target.value })}
+            />
+            <div className={styles.buttonGroup}>
+              <button onClick={() => handleSubmit("bank")}>ذخیره</button>
+              <button onClick={() => handleCancel("bank")}>لغو</button>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.info}>
+            <p>شماره کارت: {profileData?.payment?.debitCard_code || "تنظیم نشده"}</p>
+            <p>شماره شبا: {profileData?.payment?.shaba_code || "تنظیم نشده"}</p>
+            <p>شناسه حساب: {profileData?.payment?.accountIdentifier || "تنظیم نشده"}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 function TourDetail({ tour }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const tourId = tour?.id; // استخراج tourId از props
+  const tourId = tour?.id;
 
   const formatPrice = (price) => {
     const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
@@ -58,7 +58,6 @@ function TourDetail({ tour }) {
   const handleBooking = async () => {
     setIsLoading(true);
     const token = getCookie("accessToken");
-    console.log("token:", token);
     const res = await fetch(`http://localhost:6500/basket/${tourId}`, {
       method: "PUT",
       headers: {
@@ -70,7 +69,6 @@ function TourDetail({ tour }) {
       router.push(`/basket`);
     } else {
       const errorText = await res.text();
-      console.log("Basket error:", errorText);
       alert("خطا در افزودن به سبد خرید یا توکن نامعتبر است.");
     }
     setIsLoading(false);

@@ -19,11 +19,19 @@ async function getTours() {
   }
 }
 
-export default async function Home() {
+export default async function Home({ searchParams }) {
   const tours = await getTours();
+  
+  const redirect = searchParams?.redirect;
+  const expired = searchParams?.expired;
+  
   return (
     <main>
-      <HomePage initialTours={tours} />
+      <HomePage 
+        initialTours={tours} 
+        redirectPath={redirect}
+        showExpiredMessage={expired === 'true'}
+      />
     </main>
   );
 }

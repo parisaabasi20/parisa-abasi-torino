@@ -26,19 +26,13 @@ function Header() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const accessToken = getCookie("accessToken");
-      if (accessToken) {
-        const profile = localStorage.getItem("userProfile");
-        if (profile) {
-          setUser(JSON.parse(profile));
-        } else {
-          const phone = getCookie("userPhone");
-          if (phone) setUser({ phone });
-        }
-      } else {
-        setUser(null);
-      }
+    const accessToken = getCookie("accessToken");
+    const phone = getCookie("userPhone");
+    
+    if (accessToken && phone) {
+      setUser({ phone });
+    } else {
+      setUser(null);
     }
   }, []);
 

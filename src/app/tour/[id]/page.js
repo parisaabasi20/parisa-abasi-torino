@@ -9,7 +9,6 @@ async function getTour(id) {
     }
 
     const allTours = await response.json();
-    console.log("Tours data:", allTours);
 
     if (!allTours || allTours.length === 0) {
       return { success: false, error: "No tours available" };

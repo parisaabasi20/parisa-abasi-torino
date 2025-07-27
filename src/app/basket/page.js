@@ -51,8 +51,6 @@ function Basket() {
       return;
     }
     const token = getCookie("accessToken");
-    console.log("token:", token);
-    console.log("formData:", formData);
 
     const res = await fetch("http://localhost:6500/order", {
       method: "POST",
@@ -65,11 +63,9 @@ function Basket() {
 
     if (res.ok) {
       const data = await res.json();
-      console.log("order response:", data);
       router.push(`/order?paymentLink=${encodeURIComponent(data.paymentLink)}`);
     } else {
       const errorText = await res.text();
-      console.log("Order error:", errorText);
       alert("خطا در ثبت سفارش یا توکن نامعتبر است.");
     }
   };
@@ -82,7 +78,6 @@ function Basket() {
   const handleDateChange = (date) => {
     setFormData((prev) => {
       const updated = { ...prev, birthDate: date };
-      console.log("birthDate selected:", updated.birthDate);
       return updated;
     });
   };

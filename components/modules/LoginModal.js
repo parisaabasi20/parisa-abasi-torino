@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -12,6 +12,7 @@ import styles from "./LoginModal.module.css";
 import Back from "components/icons/Back";
 import Close from "components/icons/Close";
 import { setCookie } from "../../core/utils/cookie";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const schema = yup.object({
   mobile: yup
@@ -24,6 +25,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [step, setStep] = useState(1);
   const [mobile, setMobile] = useState("");
   const [inputCode, setInputCode] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const {
     register,
@@ -54,39 +57,17 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   const onSubmitOtp = async () => {
     try {
-      console.log("Submitting OTP:", {
-        mobile,
-        code: inputCode,
-        codeLength: inputCode.length,
-      });
       const res = await api.post("/auth/check-otp", {
         mobile,
         code: inputCode,
       });
 
-      setCookie("accessToken", res.data.accessToken, 1);
-      setCookie("refreshToken", res.data.refreshToken, 7);
-      setCookie("userPhone", mobile, 1);
-
-
-      try {
-        const profileRes = await fetch("http://localhost:6500/user/profile", {
-          headers: { Authorization: `Bearer ${res.data.accessToken}` },
-        });
-        if (profileRes.ok) {
-          const profileData = await profileRes.json();
-          if (profileData && profileData.user) {
-            localStorage.setItem(
-              "userProfile",
-              JSON.stringify(profileData.user)
-            );
-          }
-        }
-      } catch (e) {}
+      setCookie("accessToken", res.data.accessToken, 7);
+      setCookie("refreshToken", res.data.refreshToken, 30);
+      setCookie("userPhone", mobile, 30);
 
       toast.success("ورود با موفقیت انجام شد");
 
-      // Call the callback to update Header state
       if (onLoginSuccess) {
         onLoginSuccess(mobile);
       }
@@ -94,6 +75,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       onClose();
       setStep(1);
       setInputCode("");
+
+      const redirectTo = searchParams.get("redirect");
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (error) {
       toast.error("کد وارد شده اشتباه است");
     }
@@ -125,15 +113,19 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
               </button>
             )}
           </div>
+
           {step === 1 && (
-            <form onSubmit={handleSubmit(onSubmitMobile)} className={styles.form}>
+            <form
+              onSubmit={handleSubmit(onSubmitMobile)}
+              className={styles.form}
+            >
               <h2 className={styles.title}>ورود به تورینو</h2>
               <p className={styles.textOne}>شماره موبایل خود را وارد کنید</p>
               <input
                 type="text"
                 placeholder="09122223456"
                 {...register("mobile")}
-                className={ errors.mobile ? styles.inputError : ""}
+                className={errors.mobile ? styles.inputError : ""}
               />
               <p className={styles.errorText}>{errors.mobile?.message}</p>
               <button type="submit" className={styles.btnSubmit}>
@@ -204,3 +196,4 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     </>
   );
 }
+
