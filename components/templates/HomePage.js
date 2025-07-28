@@ -8,6 +8,8 @@ import TourList from 'components/tour/TourList';
 import LoginModal from 'components/modules/LoginModal';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ContactUs from 'components/modules/ContactUs';
+import AboutUs from 'components/modules/AboutUs';
 
 function HomePage({ initialTours = [], redirectPath, showExpiredMessage }) {
   const [tours, setTours] = useState(initialTours);
@@ -63,6 +65,8 @@ function HomePage({ initialTours = [], redirectPath, showExpiredMessage }) {
       <h1 className={styles.title}>تورینو برگزار کننده بهترین تور های داخلی و خارجی</h1>
       <SearchForm onSearch={handleSearch}/>
       <TourList tours={tours} openLoginModal={openLoginModal} />
+      <ContactUs />
+      {/* <AboutUs /> */}
       <LoginModal isOpen={isLoginOpen} onClose={closeLoginModal} />
       <ToastContainer position="top-center" rtl />
     </div>

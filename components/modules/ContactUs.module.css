@@ -1,0 +1,133 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 50px 20px;
+}
+
+.banner {
+  position: relative;
+  background-color: #28a745;
+  width: 70%;
+  padding: 20px;
+  height: 230px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.bannerTitle {
+  font-size: 48px;
+  color: #fff;
+  margin: 25px 25px 0 0;
+}
+
+.bannerTitleTorino {
+  color: black;
+}
+
+.bannerDescription {
+  margin-right: 25px;
+  color: #fff;
+  font-size: 32px;
+}
+
+.bannerIconL {
+  position: absolute;
+  bottom: -10px;
+  left: 30px;
+}
+
+.bannerIcon {
+  display: none;
+}
+
+.contactUs {
+  width: 30%;
+  height: 230px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #00000040;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.number span {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000000;
+  padding: 10px;
+}
+
+.btn {
+  color: #fff;
+  font-size: 16px;
+  background-color: #10411b;
+  border-radius: 9px;
+  padding: 10px 30px;
+  margin-top: 15px;
+}
+
+@media (max-width: 950px) and (min-width: 768px) {
+  .bannerTitle {
+    font-size: 34px;
+  }
+
+  .bannerDescription {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bannerIcon {
+    display: inline;
+    position: absolute;
+    bottom: -75px;
+    left: 10px;
+  }
+
+  .banner {
+    width: 90%;
+    height: 128px;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+  }
+
+  .bannerTitle {
+    font-size: 22px;
+  }
+
+  .bannerDescription {
+    font-size: 14px;
+  }
+
+  .contactUs {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 90%;
+    height: 38px;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .btn {
+    margin-top: 0;
+    /* margin-left: 20px; */
+  }
+
+  .number span {
+    font-size: 20px;
+  }
+
+  .bannerIconL {
+    display: none;
+  }
+}

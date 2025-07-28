@@ -1,9 +1,15 @@
 import HomePage from "components/templates/HomePage";
 
+export const metadata = {
+  title: "تورینو - برگزار کننده بهترین تورهای داخلی و خارجی",
+  description: "تورینو، ارائه دهنده تورهای مسافرتی داخلی و خارجی با بهترین قیمت و کیفیت",
+  keywords: "تور مسافرتی, تور داخلی, تور خارجی, رزرو تور",
+};
+
 async function getTours() {
   try {
     const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "tour", { 
-      cache: "no-store",
+      next: { revalidate: 3600 }, 
       headers: {
         'Content-Type': 'application/json',
       }

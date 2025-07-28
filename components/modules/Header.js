@@ -26,13 +26,13 @@ function Header() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const accessToken = getCookie("accessToken");
-    const phone = getCookie("userPhone");
+      const accessToken = getCookie("accessToken");
+          const phone = getCookie("userPhone");
     
     if (accessToken && phone) {
       setUser({ phone });
-    } else {
-      setUser(null);
+      } else {
+        setUser(null);
     }
   }, []);
 

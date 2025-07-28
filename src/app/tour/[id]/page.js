@@ -2,7 +2,9 @@ import TourDetail from "../../../../components/tour/TourDetail";
 
 async function getTour(id) {
   try {
-    const response = await fetch("http://localhost:6500/tour");
+    const response = await fetch("http://localhost:6500/tour", {
+      next: { revalidate: 1800 },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -32,6 +34,26 @@ async function getTour(id) {
       error: `API Error: ${error.message}`,
     };
   }
+}
+
+export async function generateMetadata({ params }) {
+  const result = await getTour(params.id);
+  
+  if (!result.success) {
+    return {
+      title: "تور یافت نشد | تورینو",
+      description: "تور مورد نظر یافت نشد",
+    };
+  }
+
+  const tour = result.tour;
+  const title = `${tour.title} - ${tour.origin?.name || ''} به ${tour.destination?.name || ''} | تورینو`;
+  const description = `تور ${tour.title} از ${tour.origin?.name || ''} به ${tour.destination?.name || ''} با قیمت ${tour.price?.toLocaleString() || ''} تومان.`;
+
+  return {
+    title,
+    description,
+  };
 }
 
 export default async function TourPage({ params }) {
