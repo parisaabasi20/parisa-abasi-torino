@@ -1,0 +1,158 @@
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.status {
+  background: rgba(40, 167, 69, 0.3);
+  color: rgba(40, 167, 69, 1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.tourInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.transportType {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.transportIcon {
+  font-size: 1.2rem;
+  margin-left: 4px;
+}
+
+.transportText {
+  font-weight: 500;
+}
+
+.route {
+  margin-bottom: 15px;
+}
+
+.oneWay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.origin, .destination {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 0.9rem;
+}
+
+.arrow {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  margin: 0 8px;
+}
+
+.dateValue {
+  font-size: 0.85rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.return {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid #f3f4f6;
+}
+
+.dateLabel {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 2px solid #f3f4f6;
+}
+
+.tourNumber, .priceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.numberLabel, .priceLabel {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.numberValue, .priceValue {
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.priceValue {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 15px;
+  }
+  
+  .tourInfo {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .footer {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .oneWay {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .return {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
