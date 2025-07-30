@@ -1,0 +1,114 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin: 30px;
+}
+
+.formContainer {
+  border: 1px solid #cecece;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 10px;
+}
+
+.inputsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.inputsContainer input {
+  margin: 10px;
+  height: 50px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.selection {
+  height: 50px;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  font-size: 14px;
+}
+
+.buyInfo {
+  border: 1px solid #c9c8c8;
+  margin: 10px;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #646464;
+  margin: 15px 5px;
+}
+
+.title h3 {
+  font-size: 24px;
+}
+
+.title p {
+  font-size: 18px;
+}
+
+.price {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 5px;
+}
+
+.price span {
+  color: #009eca;
+}
+
+.btn {
+  width: 100%;
+  margin: 10px auto;
+  height: 50px;
+  background-color: rgba(40, 167, 69, 1);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  border-radius: 10px;
+}
+
+
+@media (min-width: 768px) {
+    .container{
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 100px;
+    }
+
+    .formContainer{
+        /* width: 60%; */
+    }
+
+    .inputsContainer{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .inputsContainer{
+        margin: 5px;
+    }
+
+    .selection{
+        width: 25%;
+    }
+
+    .title h3 {
+  font-size: 22px;
+}
+
+.title p {
+  font-size: 16px;
+}
+
+}

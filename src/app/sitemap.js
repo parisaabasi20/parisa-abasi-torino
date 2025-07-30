@@ -2,9 +2,7 @@ export default async function sitemap() {
   const baseUrl = 'https://torino.ir';
 
   try {
-    const toursResponse = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "tour", {
-      next: { revalidate: 3600 },
-    });
+    const toursResponse = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "tour");
     
     let tours = [];
     if (toursResponse.ok) {

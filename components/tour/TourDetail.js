@@ -13,7 +13,6 @@ import Bime from "components/icons/Bime";
 import ContactGray from "components/icons/ContactGray";
 import { useRouter } from "next/navigation";
 
-
 function TourDetail({ tour }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -61,9 +60,9 @@ function TourDetail({ tour }) {
     const res = await fetch(`http://localhost:6500/basket/${tourId}`, {
       method: "PUT",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
     if (res.ok) {
       router.push(`/basket`);
@@ -76,41 +75,59 @@ function TourDetail({ tour }) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.imageSection}>
-        <Image
-          src={tour.image}
-          alt={tour.title}
-          width={1000}
-          height={1000}
-          className={styles.tourImage}
-        />
-      </div>
-
-      <div className={styles.tourTitle}>
-        <h1>{tour.title}</h1>
-        <p className={styles.duration}>
-          {getDuration(tour.startDate, tour.endDate)}
-        </p>
-      </div>
-
-      <div className={styles.detailsGrid}>
-        <div className={styles.detailItem}>
-          <span className={styles.detailIcon}>
-            <ContactGray />
-          </span>
-          <span className={styles.detailText}>تورلیدر از مبدا</span>
+      <div className={styles.subContainer}>
+        <div className={styles.imageSection}>
+          <Image
+            src={tour.image}
+            alt={tour.title}
+            width={1000}
+            height={1000}
+            className={styles.tourImage}
+          />
         </div>
-        <div className={styles.detailItem}>
-          <span className={styles.detailIcon}>
-            <DetailsPageIconOne />
-          </span>
-          <span className={styles.detailText}>برنامه سفر</span>
-        </div>
-        <div className={styles.detailItem}>
-          <span className={styles.detailIcon}>
-            <TazminSafar />
-          </span>
-          <span className={styles.detailText}>تضمین کیفیت</span>
+        <div className={styles.infoTour}>
+          <div className={styles.tourTitle}>
+            <h1>{tour.title}</h1>
+            <p className={styles.duration}>
+              {getDuration(tour.startDate, tour.endDate)}
+            </p>
+          </div>
+
+          <div className={styles.detailsGrid}>
+            <div className={styles.detailItem}>
+              <span className={styles.detailIcon}>
+                <ContactGray />
+              </span>
+              <span className={styles.detailText}>تورلیدر از مبدا</span>
+            </div>
+            <div className={styles.detailItem}>
+              <span className={styles.detailIcon}>
+                <DetailsPageIconOne />
+              </span>
+              <span className={styles.detailText}>برنامه سفر</span>
+            </div>
+            <div className={styles.detailItem}>
+              <span className={styles.detailIcon}>
+                <TazminSafar />
+              </span>
+              <span className={styles.detailText}>تضمین کیفیت</span>
+            </div>
+          </div>
+
+          <div className={styles.bookingSectionOne}>
+            <div className={styles.priceInfo}>
+              <span className={styles.price}>{formatPrice(tour.price)}</span>
+              <span className={styles.currency}>تومان</span>
+            </div>
+
+            <button
+              onClick={handleBooking}
+              className={styles.bookButton}
+              disabled={isLoading}
+            >
+              {isLoading ? "در حال پردازش..." : "رزرو و خرید"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -122,9 +139,7 @@ function TourDetail({ tour }) {
             </span>
             <span className={styles.detailText}>حمل و نقل</span>
           </p>
-          <p>
-            {getVehicleType(tour.fleetVehicle)}
-          </p>
+          <p>{getVehicleType(tour.fleetVehicle)}</p>
         </div>
         <div className={styles.detailItemInfo}>
           <p>

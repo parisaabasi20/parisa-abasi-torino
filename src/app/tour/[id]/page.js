@@ -2,9 +2,7 @@ import TourDetail from "../../../../components/tour/TourDetail";
 
 async function getTour(id) {
   try {
-    const response = await fetch("http://localhost:6500/tour", {
-      next: { revalidate: 1800 },
-    });
+    const response = await fetch("http://localhost:6500/tour");
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);

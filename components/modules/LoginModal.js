@@ -44,7 +44,9 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       });
 
       if (res.data.code) {
-        toast.success(`کد اعتبارسنجی ارسال شد: ${res.data.code}`);
+        toast.success(`کد اعتبارسنجی ارسال شد: ${res.data.code}`, {
+          autoClose: 10000*15, 
+        });
       } else {
         toast.success("کد اعتبارسنجی ارسال شد");
       }
@@ -137,7 +139,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           {step === 2 && (
             <div>
               <h2 className={styles.title}>کد تایید را وارد کنید</h2>
-              <p>کد ارسال شده: {inputCode.length}/6</p>
+              <p>کد تایید به شماره {mobile}ارسال شد</p>
               <div
                 className={styles.otp}
                 style={{
@@ -196,4 +198,3 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     </>
   );
 }
-

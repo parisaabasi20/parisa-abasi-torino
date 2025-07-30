@@ -1,43 +1,129 @@
-.accountInfo,.personalInfo,.bankInfo{
-    border: 1px solid #00000033;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    padding: 10px;
+.accountInfo,
+.personalInfo,
+.bankInfo {
+  border: 1px solid #00000033;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
 }
 
-.header{
-    font-size: 16px;
-    font-weight: 400;
-    margin: 20px 10px;
+.header {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 20px 10px;
 }
 
-.accountInfoRow{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.accountInfoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.personalInfoHeader,.personalInfoRow{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.bankInfoHeader,.bankInfoRow{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.personalInfoHeader,
+.personalInfoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.bankInfoRow,.personalInfoRow,.accountInfoRow{
-    margin: 20px 10px;
-    font-size: 14px;
-    font-weight: 300;
-    color: #363535;
+.bankInfoHeader,
+.bankInfoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.bankInfoEditBtn,.personalInfoEditBtn,.accountInfoBtn{
-    border: none;
-    background-color: #fff;
-    color:#009ECA;
-    cursor: pointer;
+.bankInfoRow,
+.personalInfoRow,
+.accountInfoRow {
+  margin: 20px 10px;
+  font-size: 14px;
+  font-weight: 300;
+  color: #363535;
+}
+
+.bankInfoEditBtn,
+.personalInfoEditBtn,
+.accountInfoBtn {
+  border: none;
+  background-color: #fff;
+  color: #009eca;
+  cursor: pointer;
+}
+
+.section {
+  border: 1px solid #888;
+  margin: 20px;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.sectionHeader {
+  font-size: 16px;
+}
+
+.info p {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.EditeBtn {
+  border: none;
+  background-color: #fff;
+  color: #009eca;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-around;
+}
+
+.buttonGroup:nth-child(1) {
+  background-color: rgba(40, 167, 69, 1);
+}
+
+.btns,
+.btnsS {
+  height: 40px;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 5px;
+  width: 100%;
+  margin: 10px;
+}
+
+.btns {
+  color: rgba(40, 167, 69, 1);
+  background-color: #fff;
+  border: 1px solid rgba(40, 167, 69, 1);
+}
+
+.btnsS {
+  background-color: rgba(40, 167, 69, 1);
+  color: #fff;
+  border: none;
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.editForm input {
+  height: 50px;
+  font-size: 16px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.editForm select {
+  height: 50px;
+  font-size: 16px;
+  margin: 10px;
 }

@@ -26,13 +26,13 @@ function Header() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-      const accessToken = getCookie("accessToken");
-          const phone = getCookie("userPhone");
-    
+    const accessToken = getCookie("accessToken");
+    const phone = getCookie("userPhone");
+
     if (accessToken && phone) {
       setUser({ phone });
-      } else {
-        setUser(null);
+    } else {
+      setUser(null);
     }
   }, []);
 
@@ -141,8 +141,10 @@ function Header() {
                     className={`${styles.dropdownItem} ${styles.logoutItem}`}
                     onClick={handleLogout}
                   >
+                    <span className={styles.logoutIcon}>
+                      <Exit />
+                    </span>
                     <span>خروج از حساب کاربری</span>
-                    <span className={styles.logoutIcon}>←</span>
                   </div>
                 </div>
               )}
@@ -184,7 +186,10 @@ function Header() {
               {isUserDropdownOpen && (
                 <div className={styles.userDropdown}>
                   <div className={styles.dropdownItem}>
-                    <span className={styles.dropdownPhone}>{user.phone}</span>
+                    <span className={styles.dropdownPhone}>
+                      <ContactGray />
+                      {user.phone}
+                    </span>
                   </div>
                   <div className={styles.dropdownItem}>
                     <Link href="/dashboard">

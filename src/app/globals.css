@@ -34,11 +34,15 @@ body {
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  box-sizing: border-box;
+  
   background: var(--background);
   color: var(--foreground);
   font-family: YekanBakh-Regular, Arial, Helvetica, sans-serif;
 }
+
+
+

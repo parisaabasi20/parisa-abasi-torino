@@ -8,8 +8,7 @@ export const metadata = {
 
 async function getTours() {
   try {
-    const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "tour", { 
-      next: { revalidate: 3600 }, 
+    const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "tour", {
       headers: {
         'Content-Type': 'application/json',
       }

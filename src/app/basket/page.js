@@ -66,7 +66,7 @@ function Basket() {
       router.push(`/order?paymentLink=${encodeURIComponent(data.paymentLink)}`);
     } else {
       const errorText = await res.text();
-      alert("خطا در ثبت سفارش یا توکن نامعتبر است.");
+      alert("خطا در ثبت سفارش .");
     }
   };
 
@@ -114,53 +114,60 @@ function Basket() {
           <ContactGray />
           مشخصات مسافر
         </h3>
-        <input
-          name="fullName"
-          value={formData.fullName}
-          onChange={handleChange}
-          placeholder="نام و نام خانوادگی"
-        />
-        <input
-          name="nationalCode"
-          value={formData.nationalCode}
-          onChange={handleChange}
-          placeholder="کد ملی"
-        />
+        <div className={styles.inputsContainer}>
+          <input
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            placeholder="نام و نام خانوادگی"
+          />
+          <input
+            name="nationalCode"
+            value={formData.nationalCode}
+            onChange={handleChange}
+            placeholder="کد ملی"
+          />
 
-        <DatePicker
-          inputClass={styles.dateInput}
-          value={formData.birthDate}
-          onChange={handleDateChange}
-          round="x2"
-          locale="fa"
-          style={{ width: "100%" }}
-          inputAttributes={{ placeholder: "تاریخ تولد" }}
-        />
+          <DatePicker
+            inputClass={styles.dateInput}
+            value={formData.birthDate}
+            onChange={handleDateChange}
+            round="x2"
+            locale="fa"
+            style={{ width: "80%" }}
+            inputAttributes={{ placeholder: "تاریخ تولد" }}
+          />
 
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          placeholder="جنسیت"
-          style={{ width: "100%", margin: "10px 0" }}
-        >
-          <option value="">جنسیت</option>
-          <option value="male">مرد</option>
-          <option value="female">زن</option>
-        </select>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            placeholder="جنسیت"
+            className={styles.selection}
+          >
+            <option value="">جنسیت</option>
+            <option value="male">مرد</option>
+            <option value="female">زن</option>
+          </select>
+        </div>
       </div>
       <div className={styles.buyInfo}>
         {tour ? (
           <>
-            <div>
+            <div className={styles.title}>
               <h3>{tour.title}</h3>
               <p>{getDuration(tour.startDate, tour.endDate)}</p>
             </div>
-            <div>
+            <div className={styles.price}>
               <p>قیمت نهایی</p>
-              <p>{formatPrice(tour.price)}</p>
+              <p>
+                <span>{formatPrice(tour.price)}</span>
+                تومان
+              </p>
             </div>
-            <button onClick={handleOrder}>ثبت و خرید نهایی</button>
+            <button className={styles.btn} onClick={handleOrder}>
+              ثبت و خرید نهایی
+            </button>
           </>
         ) : (
           <div>loading...</div>
