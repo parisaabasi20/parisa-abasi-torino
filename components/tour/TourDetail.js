@@ -17,6 +17,7 @@ function TourDetail({ tour }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const tourId = tour?.id;
+  console.log(tour);
 
   const formatPrice = (price) => {
     const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
@@ -55,8 +56,14 @@ function TourDetail({ tour }) {
   };
 
   const handleBooking = async () => {
-    setIsLoading(true);
     const token = getCookie("accessToken");
+    if (!token) {
+      alert("برای ادامه خرید ابتدا وارد حساب کاربری شوید.");
+      router.push(`/?redirect=/tour/${encodeURIComponent(tourId)}`);
+      return;
+    }
+
+    setIsLoading(true);
     const res = await fetch(`http://localhost:6500/basket/${tourId}`, {
       method: "PUT",
       headers: {
@@ -148,7 +155,7 @@ function TourDetail({ tour }) {
             </span>
             <span className={styles.detailText}>ظرفیت </span>
           </p>
-          <p>حداکثر ۳۰ نفر</p>
+          <p>حداکث+ر ۳۰ نفر</p>
         </div>
         <div className={styles.detailItemInfo}>
           <p>

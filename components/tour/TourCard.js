@@ -1,7 +1,6 @@
 import styles from "./TourCard.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { getCookie } from "../../core/utils/cookie";
 
 function TourCard({ data, index, openLoginModal }) {
   const formatPrice = (price) => {
@@ -73,14 +72,6 @@ function TourCard({ data, index, openLoginModal }) {
 
   const tourId = index + 1;
 
-  const handleReserve = (e) => {
-    const token = getCookie("accessToken");
-    if (!token) {
-      e.preventDefault();
-      if (openLoginModal) openLoginModal();
-    }
-  };
-
   return (
     <div className={styles.card}>
       <Image
@@ -94,11 +85,7 @@ function TourCard({ data, index, openLoginModal }) {
       <p className={styles.info}>{tourInfo}</p>
       <hr className={styles.hr} />
       <div className={styles.btnContainer}>
-        <Link
-          href={`/tour/${tourId}`}
-          className={styles.btn}
-          onClick={handleReserve}
-        >
+        <Link href={`/tour/${tourId}`} className={styles.btn}>
           رزرو
         </Link>
         <p className={styles.price}>

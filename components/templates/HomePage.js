@@ -30,13 +30,24 @@ function HomePage({ initialTours = [], redirectPath, showExpiredMessage }) {
   }, [showExpiredMessage, redirectPath]);
 
   const handleSearch = async (filters) => {
-    if (!filters.origin && !filters.destination && !filters.date) {
+    if (
+      !filters.origin &&
+      !filters.destination &&
+      !filters.startDate &&
+      !filters.endDate
+    ) {
       setTours(initialTours);
       setSearched(false);
       return;
     }
-    const res = await api.get("/tour");
+
+    const params = {};
+    if (filters.startDate) params.startDate = filters.startDate;
+    if (filters.endDate) params.endDate = filters.endDate;
+
+    const res = await api.get("/tour", { params });
     let filtered = res.data;
+
     if (filters.origin) {
       filtered = filtered.filter(
         (t) => t.origin.name.toLowerCase() === filters.origin.toLowerCase()
@@ -48,9 +59,7 @@ function HomePage({ initialTours = [], redirectPath, showExpiredMessage }) {
           t.destination.name.toLowerCase() === filters.destination.toLowerCase()
       );
     }
-    if (filters.date) {
-      filtered = filtered.filter((t) => t.startDate.startsWith(filters.date));
-    }
+
     setTours(filtered);
     setSearched(true);
   };

@@ -9,7 +9,7 @@ import Date from "components/icons/Date";
 export default function SearchForm({ onSearch }) {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
-  const [date, setDate] = useState(null);
+  const [dateRange, setDateRange] = useState({ from: null, to: null });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +17,10 @@ export default function SearchForm({ onSearch }) {
     onSearch({
       origin,
       destination,
-      date: date ? date.toGregorian().toISOString().slice(0, 10) : "",
+      startDate: dateRange.from
+        ? dateRange.from.toISOString().slice(0, 10)
+        : "",
+      endDate: dateRange.to ? dateRange.to.toISOString().slice(0, 10) : "",
     });
   };
 
@@ -55,9 +58,11 @@ export default function SearchForm({ onSearch }) {
       <div className={styles.date}>
         <DatePicker
           inputClass={styles.dateInput}
-          value={date ? date : undefined}
-          onChange={setDate}
+          value={dateRange}
+          onChange={setDateRange}
           round="x2"
+          accentColor="#28a745"
+          range={true}
           locale="fa"
           style={{ width: "100%" }}
           inputAttributes={{ placeholder: "تاریخ" }}
