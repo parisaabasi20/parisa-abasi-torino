@@ -127,3 +127,19 @@
   font-size: 16px;
   margin: 10px;
 }
+
+.error {
+  color: #dc3545;
+  font-size: 12px;
+  margin: 5px 10px;
+  display: block;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  text-align: center;
+}

@@ -1,9 +1,55 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import Edite from "components/icons/Edite";
 import styles from "./Profile.module.css";
 import { getCookie } from "../../../../core/utils/cookie";
+
+const accountSchema = yup.object({
+  mobile: yup
+    .string()
+    .matches(/^09\d{9}$/, "شماره موبایل باید با 09 شروع شود و 11 رقم باشد")
+    .required("شماره موبایل الزامی است"),
+  email: yup.string().email("ایمیل معتبر نیست").required("ایمیل الزامی است"),
+});
+
+const personalSchema = yup.object({
+  firstName: yup
+    .string()
+    .min(2, "نام باید حداقل 2 کاراکتر باشد")
+    .required("نام الزامی است"),
+  lastName: yup
+    .string()
+    .min(2, "نام خانوادگی باید حداقل 2 کاراکتر باشد")
+    .required("نام خانوادگی الزامی است"),
+  gender: yup
+    .string()
+    .oneOf(["male", "female"], "لطفاً جنسیت را انتخاب کنید")
+    .required("جنسیت الزامی است"),
+  nationalCode: yup
+    .string()
+    .matches(/^\d{10}$/, "کد ملی باید 10 رقم باشد")
+    .required("کد ملی الزامی است"),
+  birthDate: yup.string().required("تاریخ تولد الزامی است"),
+});
+
+const bankSchema = yup.object({
+  debitCard_code: yup
+    .string()
+    .matches(/^\d{16}$/, "شماره کارت باید 16 رقم باشد")
+    .required("شماره کارت الزامی است"),
+  shaba_code: yup
+    .string()
+    .matches(/^IR\d{24}$/, "شماره شبا باید با IR شروع شود و 26 کاراکتر باشد")
+    .required("شماره شبا الزامی است"),
+  accountIdentifier: yup
+    .string()
+    .min(5, "شناسه حساب باید حداقل 5 کاراکتر باشد")
+    .required("شناسه حساب الزامی است"),
+});
 
 function Profile() {
   const router = useRouter();
@@ -11,11 +57,25 @@ function Profile() {
   const [isEditingAccount, setIsEditingAccount] = useState(false);
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [isEditingBank, setIsEditingBank] = useState(false);
-  const [form, setForm] = useState({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [userPhone, setUserPhone] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  const accountForm = useForm({
+    resolver: yupResolver(accountSchema),
+    mode: "onChange",
+  });
+
+  const personalForm = useForm({
+    resolver: yupResolver(personalSchema),
+    mode: "onChange",
+  });
+
+  const bankForm = useForm({
+    resolver: yupResolver(bankSchema),
+    mode: "onChange",
+  });
 
   useEffect(() => {
     const token = getCookie("accessToken");
@@ -82,13 +142,13 @@ function Profile() {
   const handleEdit = (section) => {
     if (section === "account") {
       setIsEditingAccount(true);
-      setForm({
+      accountForm.reset({
         mobile: profileData?.mobile || "",
         email: profileData?.email || "",
       });
     } else if (section === "personal") {
       setIsEditingPersonal(true);
-      setForm({
+      personalForm.reset({
         firstName: profileData?.firstName || "",
         lastName: profileData?.lastName || "",
         gender: profileData?.gender || "",
@@ -97,7 +157,7 @@ function Profile() {
       });
     } else if (section === "bank") {
       setIsEditingBank(true);
-      setForm({
+      bankForm.reset({
         debitCard_code: profileData?.payment?.debitCard_code || "",
         shaba_code: profileData?.payment?.shaba_code || "",
         accountIdentifier: profileData?.payment?.accountIdentifier || "",
@@ -108,15 +168,17 @@ function Profile() {
   const handleCancel = (section) => {
     if (section === "account") {
       setIsEditingAccount(false);
+      accountForm.reset();
     } else if (section === "personal") {
       setIsEditingPersonal(false);
+      personalForm.reset();
     } else if (section === "bank") {
       setIsEditingBank(false);
+      bankForm.reset();
     }
-    setForm({});
   };
 
-  const handleSubmit = async (section) => {
+  const onSubmitAccount = async (data) => {
     setError("");
     setSuccess("");
     const token = getCookie("accessToken");
@@ -126,24 +188,9 @@ function Profile() {
     }
     try {
       const updatedData = { ...profileData };
-      if (section === "account") {
-        updatedData.mobile = form.mobile;
-        updatedData.email = form.email;
-      }
-      if (section === "personal") {
-        updatedData.firstName = form.firstName;
-        updatedData.lastName = form.lastName;
-        updatedData.gender = form.gender;
-        updatedData.nationalCode = form.nationalCode;
-        updatedData.birthDate = form.birthDate;
-      }
-      if (section === "bank") {
-        updatedData.payment = {
-          debitCard_code: form.debitCard_code,
-          shaba_code: form.shaba_code,
-          accountIdentifier: form.accountIdentifier,
-        };
-      }
+      updatedData.mobile = data.mobile;
+      updatedData.email = data.email;
+
       const res = await fetch("http://localhost:6500/user/profile", {
         method: "PUT",
         headers: {
@@ -163,15 +210,115 @@ function Profile() {
         setError("خطا در ذخیره اطلاعات!");
         return;
       }
-      const data = await res.json();
-      const profile = data?.user || data;
+      const responseData = await res.json();
+      const profile = responseData?.user || responseData;
       if (profile) {
         setProfileData(profile);
         if (typeof window !== "undefined") {
           localStorage.setItem("userProfile", JSON.stringify(profile));
         }
         setSuccess("اطلاعات با موفقیت ذخیره شد!");
-        handleCancel(section);
+        handleCancel("account");
+      }
+    } catch (error) {
+      setError("خطا در ذخیره اطلاعات!");
+    }
+  };
+
+  const onSubmitPersonal = async (data) => {
+    setError("");
+    setSuccess("");
+    const token = getCookie("accessToken");
+    if (!token) {
+      setError("برای مشاهده یا ویرایش اطلاعات باید وارد حساب کاربری شوید.");
+      return;
+    }
+    try {
+      const updatedData = { ...profileData };
+      updatedData.firstName = data.firstName;
+      updatedData.lastName = data.lastName;
+      updatedData.gender = data.gender;
+      updatedData.nationalCode = data.nationalCode;
+      updatedData.birthDate = data.birthDate;
+
+      const res = await fetch("http://localhost:6500/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (res.status === 401 || res.status === 403) {
+        setError("دسترسی غیرمجاز! لطفاً دوباره وارد شوید.");
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("userProfile");
+        }
+        return;
+      }
+      if (!res.ok) {
+        setError("خطا در ذخیره اطلاعات!");
+        return;
+      }
+      const responseData = await res.json();
+      const profile = responseData?.user || responseData;
+      if (profile) {
+        setProfileData(profile);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("userProfile", JSON.stringify(profile));
+        }
+        setSuccess("اطلاعات با موفقیت ذخیره شد!");
+        handleCancel("personal");
+      }
+    } catch (error) {
+      setError("خطا در ذخیره اطلاعات!");
+    }
+  };
+
+  const onSubmitBank = async (data) => {
+    setError("");
+    setSuccess("");
+    const token = getCookie("accessToken");
+    if (!token) {
+      setError("برای مشاهده یا ویرایش اطلاعات باید وارد حساب کاربری شوید.");
+      return;
+    }
+    try {
+      const updatedData = { ...profileData };
+      updatedData.payment = {
+        debitCard_code: data.debitCard_code,
+        shaba_code: data.shaba_code,
+        accountIdentifier: data.accountIdentifier,
+      };
+
+      const res = await fetch("http://localhost:6500/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (res.status === 401 || res.status === 403) {
+        setError("دسترسی غیرمجاز! لطفاً دوباره وارد شوید.");
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("userProfile");
+        }
+        return;
+      }
+      if (!res.ok) {
+        setError("خطا در ذخیره اطلاعات!");
+        return;
+      }
+      const responseData = await res.json();
+      const profile = responseData?.user || responseData;
+      if (profile) {
+        setProfileData(profile);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("userProfile", JSON.stringify(profile));
+        }
+        setSuccess("اطلاعات با موفقیت ذخیره شد!");
+        handleCancel("bank");
       }
     } catch (error) {
       setError("خطا در ذخیره اطلاعات!");
@@ -204,34 +351,49 @@ function Profile() {
           )}
         </div>
         {isEditingAccount ? (
-          <div className={styles.editForm}>
+          <form
+            onSubmit={accountForm.handleSubmit(onSubmitAccount)}
+            className={styles.editForm}
+          >
             <input
               type="text"
               placeholder="شماره موبایل"
-              value={form.mobile || ""}
-              onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+              {...accountForm.register("mobile")}
             />
+            {accountForm.formState.errors.mobile && (
+              <span className={styles.error}>
+                {accountForm.formState.errors.mobile.message}
+              </span>
+            )}
             <input
               type="email"
               placeholder="ایمیل"
-              value={form.email || ""}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              {...accountForm.register("email")}
             />
+            {accountForm.formState.errors.email && (
+              <span className={styles.error}>
+                {accountForm.formState.errors.email.message}
+              </span>
+            )}
             <div className={styles.buttonGroup}>
               <button
+                type="submit"
                 className={styles.btnsS}
-                onClick={() => handleSubmit("account")}
+                disabled={accountForm.formState.isSubmitting}
               >
-                ذخیره
+                {accountForm.formState.isSubmitting
+                  ? "در حال ذخیره..."
+                  : "ذخیره"}
               </button>
               <button
+                type="button"
                 className={styles.btns}
                 onClick={() => handleCancel("account")}
               >
                 انصراف
               </button>
             </div>
-          </div>
+          </form>
         ) : (
           <div className={styles.info}>
             <p>
@@ -260,62 +422,78 @@ function Profile() {
           )}
         </div>
         {isEditingPersonal ? (
-          <div>
+          <form onSubmit={personalForm.handleSubmit(onSubmitPersonal)}>
             <div className={styles.editForm}>
               <input
                 type="text"
                 placeholder="نام"
-                value={form.firstName || ""}
-                onChange={(e) =>
-                  setForm({ ...form, firstName: e.target.value })
-                }
+                {...personalForm.register("firstName")}
               />
+              {personalForm.formState.errors.firstName && (
+                <span className={styles.error}>
+                  {personalForm.formState.errors.firstName.message}
+                </span>
+              )}
               <input
                 type="text"
                 placeholder="نام خانوادگی"
-                value={form.lastName || ""}
-                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                {...personalForm.register("lastName")}
               />
-              <select
-                value={form.gender || ""}
-                onChange={(e) => setForm({ ...form, gender: e.target.value })}
-              >
+              {personalForm.formState.errors.lastName && (
+                <span className={styles.error}>
+                  {personalForm.formState.errors.lastName.message}
+                </span>
+              )}
+              <select {...personalForm.register("gender")}>
                 <option value="">انتخاب جنسیت</option>
                 <option value="male">مرد</option>
                 <option value="female">زن</option>
               </select>
+              {personalForm.formState.errors.gender && (
+                <span className={styles.error}>
+                  {personalForm.formState.errors.gender.message}
+                </span>
+              )}
               <input
                 type="text"
                 placeholder="کد ملی"
-                value={form.nationalCode || ""}
-                onChange={(e) =>
-                  setForm({ ...form, nationalCode: e.target.value })
-                }
+                {...personalForm.register("nationalCode")}
               />
+              {personalForm.formState.errors.nationalCode && (
+                <span className={styles.error}>
+                  {personalForm.formState.errors.nationalCode.message}
+                </span>
+              )}
               <input
                 type="date"
                 placeholder="تاریخ تولد"
-                value={form.birthDate || ""}
-                onChange={(e) =>
-                  setForm({ ...form, birthDate: e.target.value })
-                }
+                {...personalForm.register("birthDate")}
               />
+              {personalForm.formState.errors.birthDate && (
+                <span className={styles.error}>
+                  {personalForm.formState.errors.birthDate.message}
+                </span>
+              )}
             </div>
             <div className={styles.buttonGroup}>
               <button
+                type="submit"
                 className={styles.btnsS}
-                onClick={() => handleSubmit("personal")}
+                disabled={personalForm.formState.isSubmitting}
               >
-                ذخیره
+                {personalForm.formState.isSubmitting
+                  ? "در حال ذخیره..."
+                  : "ذخیره"}
               </button>
               <button
+                type="button"
                 className={styles.btns}
                 onClick={() => handleCancel("personal")}
               >
                 انصراف
               </button>
             </div>
-          </div>
+          </form>
         ) : (
           <div className={styles.info}>
             <p>
@@ -356,48 +534,56 @@ function Profile() {
           )}
         </div>
         {isEditingBank ? (
-          <div>
+          <form onSubmit={bankForm.handleSubmit(onSubmitBank)}>
             <div className={styles.editForm}>
               <input
                 type="text"
                 placeholder="شماره کارت"
-                value={form.debitCard_code || ""}
-                onChange={(e) =>
-                  setForm({ ...form, debitCard_code: e.target.value })
-                }
+                {...bankForm.register("debitCard_code")}
               />
+              {bankForm.formState.errors.debitCard_code && (
+                <span className={styles.error}>
+                  {bankForm.formState.errors.debitCard_code.message}
+                </span>
+              )}
               <input
                 type="text"
                 placeholder="شماره شبا"
-                value={form.shaba_code || ""}
-                onChange={(e) =>
-                  setForm({ ...form, shaba_code: e.target.value })
-                }
+                {...bankForm.register("shaba_code")}
               />
+              {bankForm.formState.errors.shaba_code && (
+                <span className={styles.error}>
+                  {bankForm.formState.errors.shaba_code.message}
+                </span>
+              )}
               <input
                 type="text"
                 placeholder="شناسه حساب"
-                value={form.accountIdentifier || ""}
-                onChange={(e) =>
-                  setForm({ ...form, accountIdentifier: e.target.value })
-                }
+                {...bankForm.register("accountIdentifier")}
               />
+              {bankForm.formState.errors.accountIdentifier && (
+                <span className={styles.error}>
+                  {bankForm.formState.errors.accountIdentifier.message}
+                </span>
+              )}
             </div>
             <div className={styles.buttonGroup}>
               <button
+                type="submit"
                 className={styles.btnsS}
-                onClick={() => handleSubmit("bank")}
+                disabled={bankForm.formState.isSubmitting}
               >
-                ذخیره
+                {bankForm.formState.isSubmitting ? "در حال ذخیره..." : "ذخیره"}
               </button>
               <button
+                type="button"
                 className={styles.btns}
                 onClick={() => handleCancel("bank")}
               >
                 انصراف
               </button>
             </div>
-          </div>
+          </form>
         ) : (
           <div className={styles.info}>
             <p>

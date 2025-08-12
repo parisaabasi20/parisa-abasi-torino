@@ -1,23 +1,21 @@
 "use client";
+
 import { getCookie } from "../../core/utils/cookie";
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import styles from "./TourDetail.module.css";
-import Contact from "components/icons/Contact";
+import ContactGray from "components/icons/ContactGray";
 import DetailsPageIconOne from "components/icons/DetailsPageIconOne";
 import TazminSafar from "components/icons/TazminSafar";
 import Bus from "components/icons/Bus";
 import Contacts from "components/icons/Contacts";
 import Bime from "components/icons/Bime";
-import ContactGray from "components/icons/ContactGray";
 import { useRouter } from "next/navigation";
 
-function TourDetail({ tour }) {
+export default function TourDetail({ tour }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const tourId = tour?.id;
-  console.log(tour);
 
   const formatPrice = (price) => {
     const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
@@ -32,7 +30,6 @@ function TourDetail({ tour }) {
         persianNumbers[i]
       );
     }
-
     return priceStr;
   };
 
@@ -74,7 +71,6 @@ function TourDetail({ tour }) {
     if (res.ok) {
       router.push(`/basket`);
     } else {
-      const errorText = await res.text();
       alert("خطا در افزودن به سبد خرید یا توکن نامعتبر است.");
     }
     setIsLoading(false);
@@ -155,7 +151,7 @@ function TourDetail({ tour }) {
             </span>
             <span className={styles.detailText}>ظرفیت </span>
           </p>
-          <p>حداکث+ر ۳۰ نفر</p>
+          <p>حداکثر ۳۰ نفر</p>
         </div>
         <div className={styles.detailItemInfo}>
           <p>
@@ -164,7 +160,7 @@ function TourDetail({ tour }) {
             </span>
             <span className={styles.detailText}>بیمه</span>
           </p>
-          <p> ۵۰ هزار دیناری</p>
+          <p>۵۰ هزار دیناری</p>
         </div>
       </div>
 
@@ -185,5 +181,3 @@ function TourDetail({ tour }) {
     </div>
   );
 }
-
-export default TourDetail;

@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { useState, useEffect } from "react";
 import LoginModal from "../modules/LoginModal";
+import { Suspense } from "react";
 import HomeMenu from "components/icons/HomeMenu";
 import KhadamatMenu from "components/icons/KhadamatMenu";
 import AboutMenu from "components/icons/AboutMenu";
@@ -60,6 +61,13 @@ function Header() {
     setIsUserDropdownOpen(false);
   };
 
+  const handleDropdownLinkClick = (href) => {
+    closeUserDropdown();
+    setTimeout(() => {
+      router.push(href);
+    }, 150);
+  };
+
   const handleLogout = () => {
     setCookie("accessToken", "", 0);
     setCookie("userPhone", "", 0);
@@ -72,8 +80,9 @@ function Header() {
   };
 
   const handleLoginSuccess = (phoneNumber) => {
-    setUser({ phone: phoneNumber });
     closeLoginModal();
+
+    setUser({ phone: phoneNumber });
   };
 
   useEffect(() => {
@@ -133,9 +142,11 @@ function Header() {
                     <span className={styles.dropdownPhone}>{user.phone}</span>
                   </div>
                   <div className={styles.dropdownItem}>
-                    <Link href="/dashboard">
+                    <button
+                      onClick={() => handleDropdownLinkClick("/dashboard")}
+                    >
                       <span>اطلاعات حساب کاربری</span>
-                    </Link>
+                    </button>
                   </div>
                   <div
                     className={`${styles.dropdownItem} ${styles.logoutItem}`}
@@ -192,12 +203,14 @@ function Header() {
                     </span>
                   </div>
                   <div className={styles.dropdownItem}>
-                    <Link href="/dashboard">
+                    <button
+                      onClick={() => handleDropdownLinkClick("/dashboard")}
+                    >
                       <span>
                         <ContactGray />
                       </span>
                       <span className={styles.info}>اطلاعات حساب کاربری</span>
-                    </Link>
+                    </button>
                   </div>
                   <div
                     className={`${styles.dropdownItem} ${styles.logoutItem}`}
@@ -252,12 +265,14 @@ function Header() {
             </div>
           </div>
         </div>
-        <LoginModal
-          isOpen={isOpen}
-          onClose={closeLoginModal}
-          onLoginSuccess={handleLoginSuccess}
-        />
-        {(isMenuOpen || isUserDropdownOpen) && (
+        <Suspense fallback={null}>
+          <LoginModal
+            isOpen={isOpen}
+            onClose={closeLoginModal}
+            onLoginSuccess={handleLoginSuccess}
+          />
+        </Suspense>
+        {(isMenuOpen || isUserDropdownOpen) && !isOpen && (
           <div
             className={styles.backdrop}
             onClick={() => {

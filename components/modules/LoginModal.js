@@ -45,7 +45,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
       if (res.data.code) {
         toast.success(`کد اعتبارسنجی ارسال شد: ${res.data.code}`, {
-          autoClose: 10000*15, 
+          autoClose: 10000 * 15,
         });
       } else {
         toast.success("کد اعتبارسنجی ارسال شد");
@@ -70,20 +70,23 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
       toast.success("ورود با موفقیت انجام شد");
 
+      onClose();
+
+      setStep(1);
+      setInputCode("");
+
       if (onLoginSuccess) {
         onLoginSuccess(mobile);
       }
 
-      onClose();
-      setStep(1);
-      setInputCode("");
-
-      const redirectTo = searchParams.get("redirect");
-      if (redirectTo) {
-        router.push(redirectTo);
-      } else {
-        router.push("/dashboard");
-      }
+      setTimeout(() => {
+        const redirectTo = searchParams.get("redirect");
+        if (redirectTo) {
+          router.push(redirectTo);
+        } else {
+          router.push("/dashboard");
+        }
+      }, 100);
     } catch (error) {
       toast.error("کد وارد شده اشتباه است");
     }

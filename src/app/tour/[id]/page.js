@@ -2,7 +2,9 @@ import TourDetail from "../../../../components/tour/TourDetail";
 
 async function getTour(id) {
   try {
-    const response = await fetch("http://localhost:6500/tour");
+    const response = await fetch("http://localhost:6500/tour", {
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -36,7 +38,7 @@ async function getTour(id) {
 
 export async function generateMetadata({ params }) {
   const result = await getTour(params.id);
-  
+
   if (!result.success) {
     return {
       title: "تور یافت نشد | تورینو",
@@ -45,8 +47,12 @@ export async function generateMetadata({ params }) {
   }
 
   const tour = result.tour;
-  const title = `${tour.title} - ${tour.origin?.name || ''} به ${tour.destination?.name || ''} | تورینو`;
-  const description = `تور ${tour.title} از ${tour.origin?.name || ''} به ${tour.destination?.name || ''} با قیمت ${tour.price?.toLocaleString() || ''} تومان.`;
+  const title = `${tour.title} - ${tour.origin?.name || ""} به ${
+    tour.destination?.name || ""
+  } | تورینو`;
+  const description = `تور ${tour.title} از ${tour.origin?.name || ""} به ${
+    tour.destination?.name || ""
+  } با قیمت ${tour.price?.toLocaleString() || ""} تومان.`;
 
   return {
     title,
@@ -59,13 +65,7 @@ export default async function TourPage({ params }) {
 
   if (!result.success) {
     return (
-      <div
-        style={{
-          padding: "20px",
-          fontSize: "16px",
-          color: "#333",
-        }}
-      >
+      <div style={{ padding: "20px", fontSize: "16px", color: "#333" }}>
         <h2>Error:</h2>
         <p>Tour ID requested: {params.id}</p>
         <p>Error: {result.error}</p>

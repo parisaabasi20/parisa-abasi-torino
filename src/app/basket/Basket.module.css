@@ -77,38 +77,48 @@
   border-radius: 10px;
 }
 
+.btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 12px;
+  margin: 5px 10px;
+  display: block;
+}
 
 @media (min-width: 768px) {
-    .container{
-        display: flex;
-        flex-direction: row;
-        margin-bottom: 100px;
-    }
+  .container {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 100px;
+  }
 
-    .formContainer{
-        /* width: 60%; */
-    }
+  .formContainer {
+    /* width: 60%; */
+  }
 
-    .inputsContainer{
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
+  .inputsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
 
-    .inputsContainer{
-        margin: 5px;
-    }
+  .inputsContainer {
+    margin: 5px;
+  }
 
-    .selection{
-        width: 25%;
-    }
+  .selection {
+    width: 25%;
+  }
 
-    .title h3 {
-  font-size: 22px;
-}
+  .title h3 {
+    font-size: 22px;
+  }
 
-.title p {
-  font-size: 16px;
-}
-
+  .title p {
+    font-size: 16px;
+  }
 }

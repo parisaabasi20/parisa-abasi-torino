@@ -1,0 +1,37 @@
+.tableContainer {
+  overflow-x: auto;
+  margin: 20px 0;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.customTable {
+  width: 100%;
+  border-collapse: collapse;
+  direction: rtl;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.customTable th,
+.customTable td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.customTable thead {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.customTable tr:last-child td {
+  border-bottom: none;
+}
+
+.customTable tbody tr:hover {
+  background-color: #f5f5f5;
+}

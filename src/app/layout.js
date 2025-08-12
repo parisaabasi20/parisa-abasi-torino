@@ -2,6 +2,7 @@
 import "./globals.css";
 import Header from "components/modules/Header";
 import Footer from "components/modules/Footer";
+import { Suspense } from "react";
 
 export const metadata = {
   title: "تورینو - برگزار کننده بهترین تورهای داخلی و خارجی",
@@ -14,7 +15,9 @@ export default function RootLayout({ children }) {
     <html lang="fa" dir="rtl">
       <body>
         <Header />
-        {children}
+        <Suspense fallback={null}>
+          {children}
+        </Suspense>
         <Footer />
       </body>
     </html>

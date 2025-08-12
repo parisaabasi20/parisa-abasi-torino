@@ -3,17 +3,42 @@ import ContactGray from "components/icons/ContactGray";
 import styles from "./Basket.module.css";
 import { DatePicker } from "zaman";
 import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { getCookie } from "core/utils/cookie";
 import { useRouter } from "next/navigation";
 
+const basketSchema = yup.object({
+  fullName: yup
+    .string()
+    .min(2, "نام و نام خانوادگی باید حداقل ۲ کاراکتر باشد")
+    .required("نام و نام خانوادگی الزامی است"),
+  nationalCode: yup
+    .string()
+    .matches(/^\d{10}$/, "کد ملی باید ۱۰ رقم باشد")
+    .required("کد ملی الزامی است"),
+  birthDate: yup.string().required("تاریخ تولد الزامی است"),
+  gender: yup
+    .string()
+    .oneOf(["male", "female"], "لطفاً جنسیت را انتخاب کنید")
+    .required("جنسیت الزامی است"),
+});
+
 function Basket() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    nationalCode: "",
-    birthDate: "",
-    gender: "",
-  });
   const [tour, setTour] = useState(null);
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: yupResolver(basketSchema),
+    mode: "onChange",
+  });
 
   useEffect(() => {
     const fetchBasket = async () => {
@@ -39,17 +64,7 @@ function Basket() {
     fetchBasket();
   }, []);
 
-  const router = useRouter();
-  const handleOrder = async () => {
-    if (
-      !formData.fullName ||
-      !formData.nationalCode ||
-      !formData.birthDate ||
-      !formData.gender
-    ) {
-      alert("لطفاً همه فیلدها را کامل کنید.");
-      return;
-    }
+  const onSubmit = async (formData) => {
     const token = getCookie("accessToken");
 
     const res = await fetch("http://localhost:6500/order", {
@@ -65,21 +80,8 @@ function Basket() {
       const data = await res.json();
       router.push(`/order?paymentLink=${encodeURIComponent(data.paymentLink)}`);
     } else {
-      const errorText = await res.text();
-      alert("خطا در ثبت سفارش .");
+      alert("خطا در ثبت سفارش");
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleDateChange = (date) => {
-    setFormData((prev) => {
-      const updated = { ...prev, birthDate: date };
-      return updated;
-    });
   };
 
   const formatPrice = (price) => {
@@ -109,48 +111,52 @@ function Basket() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.formContainer}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
         <h3>
           <ContactGray />
           مشخصات مسافر
         </h3>
         <div className={styles.inputsContainer}>
-          <input
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            placeholder="نام و نام خانوادگی"
-          />
-          <input
-            name="nationalCode"
-            value={formData.nationalCode}
-            onChange={handleChange}
-            placeholder="کد ملی"
-          />
+          <input {...register("fullName")} placeholder="نام و نام خانوادگی" />
+          {errors.fullName && (
+            <span className={styles.error}>{errors.fullName.message}</span>
+          )}
 
-          <DatePicker
-            inputClass={styles.dateInput}
-            value={formData.birthDate}
-            onChange={handleDateChange}
-            round="x2"
-            locale="fa"
-            style={{ width: "80%" }}
-            inputAttributes={{ placeholder: "تاریخ تولد" }}
-          />
+          <input {...register("nationalCode")} placeholder="کد ملی" />
+          {errors.nationalCode && (
+            <span className={styles.error}>{errors.nationalCode.message}</span>
+          )}
 
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            placeholder="جنسیت"
-            className={styles.selection}
-          >
+          <Controller
+            name="birthDate"
+            control={control}
+            render={({ field }) => (
+              <DatePicker
+                inputClass={styles.dateInput}
+                value={field.value ? { value: field.value } : null}
+                onChange={(date) => field.onChange(date?.value || "")}
+                round="x2"
+                locale="fa"
+                style={{ width: "80%" }}
+                inputAttributes={{ placeholder: "تاریخ تولد" }}
+              />
+            )}
+          />
+          {errors.birthDate && (
+            <span className={styles.error}>{errors.birthDate.message}</span>
+          )}
+
+          <select {...register("gender")} className={styles.selection}>
             <option value="">جنسیت</option>
             <option value="male">مرد</option>
             <option value="female">زن</option>
           </select>
+          {errors.gender && (
+            <span className={styles.error}>{errors.gender.message}</span>
+          )}
         </div>
-      </div>
+      </form>
+
       <div className={styles.buyInfo}>
         {tour ? (
           <>
@@ -165,8 +171,12 @@ function Basket() {
                 تومان
               </p>
             </div>
-            <button className={styles.btn} onClick={handleOrder}>
-              ثبت و خرید نهایی
+            <button
+              className={styles.btn}
+              onClick={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "در حال ثبت..." : "ثبت و خرید نهایی"}
             </button>
           </>
         ) : (
